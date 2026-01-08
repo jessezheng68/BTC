@@ -4,9 +4,12 @@ import { calculateCompositeScore, getRecommendation } from '@/lib/calculations';
 export const dynamic = 'force-dynamic';
 export const revalidate = 300;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    // 获取当前请求的 URL，自动适配部署环境
+    const protocol = process.env.VERCEL_URL ? 'https' : 'http';
+    const host = request.headers.get('host') || process.env.VERCEL_URL || 'localhost:3000';
+    const baseUrl = `${protocol}://${host}`;
 
     // 并行获取所有指标数据
     const [
